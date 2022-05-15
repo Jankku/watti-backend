@@ -1,0 +1,41 @@
+{
+  "name": "watti-backend",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "main": "./dist/app.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc && node ./dist/app.js",
+    "dev": "nodemon",
+    "lint": "eslint --fix --ext .js,.ts ./src",
+    "format": "prettier --write ./src",
+    "test": "mocha --exit -r ts-node/register test/*.ts --timeout 10000"
+  },
+  "author": "Jankku",
+  "license": "MIT",
+  "dependencies": {
+    "apicache": "^1.6.3",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-http-proxy": "^1.6.3",
+    "express-validator": "^6.14.0",
+    "http-proxy-middleware": "^2.0.6"
+  },
+  "devDependencies": {
+    "@types/apicache": "^1.6.1",
+    "@types/express": "^4.17.13",
+    "@types/express-http-proxy": "^1.6.3",
+    "@types/http-proxy-middleware": "^1.0.0",
+    "eslint": "^8.14.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-security": "^1.5.0",
+    "nodemon": "^2.0.16",
+    "prettier": "^2.6.2",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.4"
+  }
+}
