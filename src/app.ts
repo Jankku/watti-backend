@@ -1,26 +1,34 @@
 import 'dotenv/config';
 import express from 'express';
-import { createProxyMiddleware } from 'http-proxy-middleware';
+import cors from 'cors';
 import apicache from 'apicache';
-import { logNotCachedRequests, validateQueryParams } from './utils';
+import { setupProxy } from './proxy';
+import { errorHandler, logNotCachedRequests, validateQueryParams } from './utils';
+import {
+  createPushSubscription,
+  removePushSubscription,
+  getVapidPublicKey,
+  sendPushNotification,
+  setupWebPush,
+} from './web-push';
 
-const cache = apicache.middleware;
-const app = express();
 const PORT = process.env.PORT || 5000;
-const API_KEY = process.env.FINGRID_API_KEY;
+const app = express();
+const cache = apicache.middleware;
 
 app.use(express.json());
+app.use(cors());
 
-const proxy = createProxyMiddleware({
-  target: 'https://api.fingrid.fi',
-  changeOrigin: true,
-  onProxyReq: (proxyReq) => {
-    if (!API_KEY) throw new Error('FINGRID_API_KEY not set');
-    proxyReq.setHeader('x-api-key', API_KEY);
-  },
-});
+app.use('/proxy', validateQueryParams, cache('1 hours'), logNotCachedRequests, setupProxy);
 
-app.use('/', validateQueryParams, cache('1 hours'), logNotCachedRequests, proxy);
+setupWebPush();
+
+app.post('/api/subscription/create', createPushSubscription);
+app.post('/api/subscription/remove', removePushSubscription);
+app.get('/api/subscription/notify', sendPushNotification);
+app.get('/api/subscription-key/', getVapidPublicKey);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`Server Listening to port ${PORT}`));
 
