@@ -34,7 +34,7 @@ const createPushSubscription = async (req: Request, res: Response, next: NextFun
 
     res.status(201).send({ name: 'subscription_success', message: 'Push subscription created' });
   } catch (error) {
-    next(new ErrorWithStatus(422, 'subscription_error', "Couldn't create push subscription"));
+    next(new ErrorWithStatus(422, 'subscription_error', 'Failed to create push subscription'));
   }
 };
 
@@ -45,7 +45,7 @@ const removePushSubscription = async (req: Request, res: Response, next: NextFun
     await Subscription.remove({ endpoint: sub.endpoint });
     res.status(200).send({ name: 'subscription_success', message: 'Push subscription removed' });
   } catch (error) {
-    next(new ErrorWithStatus(422, 'subscription_error', "Couldn't remove push subscription"));
+    next(new ErrorWithStatus(422, 'subscription_error', 'Failed to remove push subscription'));
   }
 };
 
@@ -63,7 +63,7 @@ const sendPushNotification = async (req: Request, res: Response, next: NextFunct
     );
     res.sendStatus(result.statusCode);
   } catch (error) {
-    next(new ErrorWithStatus(422, 'notification_error', "Couldn't send push notification"));
+    next(new ErrorWithStatus(422, 'notification_error', 'Failed to send push notification'));
   }
 };
 
