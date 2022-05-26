@@ -2,8 +2,13 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import apicache from 'apicache';
-import { setupProxy } from './proxy';
-import { errorHandler, logNotCachedRequests, validateQueryParams } from './utils';
+import { setupFingridProxy, setupVattenfallProxy } from './proxy';
+import {
+  errorHandler,
+  logNotCachedRequests,
+  validateFingridRequest,
+  validateVattenfallRequest,
+} from './utils';
 import {
   createPushSubscription,
   removePushSubscription,
@@ -19,10 +24,28 @@ const cache = apicache.middleware;
 app.use(express.json());
 app.use(cors());
 
-app.use('/proxy', validateQueryParams, cache('1 hours'), logNotCachedRequests, setupProxy);
+/**
+ * Proxies
+ */
+app.use(
+  '/fingrid',
+  validateFingridRequest,
+  cache('1 hours'),
+  logNotCachedRequests,
+  setupFingridProxy
+);
 
+app.use(
+  '/vattenfall/:start_date/:end_date',
+  validateVattenfallRequest,
+  cache('1 hours'),
+  setupVattenfallProxy
+);
+
+/**
+ * Push notifications
+ */
 setupWebPush();
-
 app.post('/api/subscription/create', createPushSubscription);
 app.post('/api/subscription/remove', removePushSubscription);
 app.get('/api/subscription/notify', sendPushNotification);

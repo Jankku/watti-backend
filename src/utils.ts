@@ -1,9 +1,24 @@
 import { Request, Response, NextFunction } from 'express';
-import { query, validationResult } from 'express-validator';
+import { param, query, validationResult } from 'express-validator';
+import { IsDateOptions } from 'express-validator/src/options';
 
-const validateQueryParams = async (req: Request, res: Response, next: NextFunction) => {
+const validateFingridRequest = async (req: Request, res: Response, next: NextFunction) => {
   await query('start_time').isISO8601().run(req);
   await query('end_time').isISO8601().run(req);
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  } else {
+    next();
+  }
+};
+
+const validateVattenfallRequest = async (req: Request, res: Response, next: NextFunction) => {
+  const dateOptions: IsDateOptions = { strictMode: true, format: 'YYYY-MM-DD', delimiters: ['-'] };
+  await param('start_date').isDate(dateOptions).run(req);
+  await param('end_date').isDate(dateOptions).run(req);
+  await query('lang').isIn(['fi', 'sv']).run(req);
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -55,4 +70,11 @@ interface ResponseItem {
  */
 const success = (results: Array<unknown | ResponseItem>) => ({ results });
 
-export { validateQueryParams, logNotCachedRequests, success, ErrorWithStatus, errorHandler };
+export {
+  validateFingridRequest,
+  validateVattenfallRequest,
+  logNotCachedRequests,
+  success,
+  ErrorWithStatus,
+  errorHandler,
+};
