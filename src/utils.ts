@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { param, query, validationResult } from 'express-validator';
 import { IsDateOptions } from 'express-validator/src/options';
+import dayjs from 'dayjs';
 
 const validateFingridRequest = async (req: Request, res: Response, next: NextFunction) => {
   await query('start_time').isISO8601().run(req);
@@ -28,9 +29,27 @@ const validateVattenfallRequest = async (req: Request, res: Response, next: Next
   }
 };
 
+const onlyStatus200 = (req: Request, res: Response) => res.statusCode === 200;
+
 const logNotCachedRequests = (req: Request, res: Response, next: NextFunction) => {
   console.log(`NOT CACHED: ${req.url}`);
   next();
+};
+
+const getFingridCacheDuration = (): string => {
+  const fiveMinutesOverNextHour = dayjs().add(1, 'hour').startOf('hour').add(5, 'minutes');
+  const cacheDurationInMinutes = fiveMinutesOverNextHour.diff(dayjs(), 'minutes');
+  console.log(`Fingrid cache: ${cacheDurationInMinutes} minutes`);
+
+  return `${cacheDurationInMinutes} minutes`;
+};
+
+const getVattenfallCacheDuration = (): string => {
+  const fiveMinutesOverNextDay = dayjs().add(1, 'day').startOf('day').add(5, 'minutes');
+  const cacheDurationInMinutes = fiveMinutesOverNextDay.diff(dayjs(), 'minutes');
+  console.log(`Vattenfall cache: ${cacheDurationInMinutes} minutes`);
+
+  return `${cacheDurationInMinutes} minutes`;
 };
 
 class ErrorWithStatus extends Error {
@@ -77,4 +96,7 @@ export {
   success,
   ErrorWithStatus,
   errorHandler,
+  getFingridCacheDuration,
+  getVattenfallCacheDuration,
+  onlyStatus200,
 };
