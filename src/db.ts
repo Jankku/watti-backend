@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const MONGO_URI = process.env.MONGO_URI;
 
-if (!MONGO_URI) throw new Error('MONGO_URI not set');
+if (!MONGO_URI) throw new Error('Set MONGO_URI variable in .env file');
 
 try {
   await mongoose.connect(MONGO_URI);

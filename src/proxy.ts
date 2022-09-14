@@ -1,7 +1,7 @@
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
-const API_KEY = process.env.FINGRID_API_KEY;
-if (!API_KEY) throw new Error('FINGRID_API_KEY not set');
+const FINGRID_API_KEY = process.env.FINGRID_API_KEY;
+if (!FINGRID_API_KEY) throw new Error('Set FINGRID_API_KEY variable in .env file');
 
 const setupFingridProxy = createProxyMiddleware({
   target: 'https://api.fingrid.fi',
@@ -10,7 +10,7 @@ const setupFingridProxy = createProxyMiddleware({
     '^/fingrid': '/',
   },
   onProxyReq: (proxyReq) => {
-    proxyReq.setHeader('x-api-key', API_KEY);
+    proxyReq.setHeader('x-api-key', FINGRID_API_KEY);
   },
 });
 

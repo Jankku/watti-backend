@@ -9,7 +9,7 @@ const WEBSITE_URL = process.env.WEBSITE_URL;
 
 if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
   console.log(`Use these keys: ${webpush.generateVAPIDKeys()}`);
-  throw new Error('Set VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY variables in .env file.');
+  throw new Error('Set VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY variables in .env file');
 }
 
 if (!WEBSITE_URL) throw new Error('WEBSITE_URL not set');
